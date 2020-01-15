@@ -35,7 +35,7 @@ void Union(int a[10], int p, int q)
 int main()
 {
 	int a[10];
-	inr i;
+	int i;
 	for(i=0;i<10;i++)
 		a[i]=i;
 	Union(a,1,2);
