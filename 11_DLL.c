@@ -1,4 +1,3 @@
-
 #include<stdio.h>
 
 struct node
@@ -12,139 +11,92 @@ typedef struct node node;
 
 node *insertEND(node *head)
 {
-    int num;
-    node *cur,*newnode;
+    node *newnode,*cur;
     cur=head;
-    printf("Enter the number to be inserted:\n");
+    int num;
+    newnode=(node *)malloc(sizeof(node));
+    printf("Enter the number:\n");
     scanf("%d",&num);
-    newnode=(node*)malloc(sizeof(node));
     newnode->data=num;
-    newnode->next=NULL;
-    newnode->prev=NULL;
+    newnode->prev=newnode->next=NULL;
     if(head==NULL)
     {
         head=newnode;
+        return head;
     }
-    else
+    while(cur->next!=NULL)
     {
-        while(cur->next!=NULL)
-        {
-            cur=cur->next;
-        }
-        cur->next=newnode;
+        cur=cur->next;
     }
+    cur->next=newnode;
+    newnode->prev=cur;
     return head;
 }
 
-node *inserBEG(node *head)
+node *insertBEG(node *head)
 {
+    node *newnode,*cur;
+
     int num;
-    node *cur,*newnode;
-    cur=head;
-    printf("Enter the number to be inserted:\n");
+    newnode=(node *)malloc(sizeof(node));
+    printf("Enter the number:\n");
     scanf("%d",&num);
-    newnode=(node*)malloc(sizeof(node));
     newnode->data=num;
-    newnode->next=NULL;
+    newnode->prev=newnode->next=NULL;
     if(head==NULL)
     {
         head=newnode;
+        newnode->prev=newnode->next=NULL;
+        return head;
     }
-    else
-    {
-        newnode->next=cur;
-        head=newnode;
-    }
+    newnode->next=head;
+    head->prev=newnode;
+    //printf("INSERTED 2 ");
+    head=newnode;
     return head;
 }
 
-node *deleteBEG(node *head)
-{
-    int num;
-    node *cur,*newnode;
-    cur=head;
-    head=cur->next;
-    free(cur);
-    return head;
-}
+
 
 node *deleteEND(node *head)
 {
-    int num;
-    node *cur,*prev;
+    node *cur,*pre;
     cur=head;
-    prev=cur;
-    if(cur==NULL)
+    if(head==NULL)
     {
-        printf("Empty\n");
-        //return head;
+        return head;
     }
-    if(cur->next==NULL)
-    {
-        head=NULL;
-        num=cur->data;
-        printf("%d is deleted \n",num);
-        free(cur);
-
-    }
-    else
-    {
     while(cur->next!=NULL)
     {
-        prev=cur;
+        pre=cur;
         cur=cur->next;
     }
-    num=cur->data;
-    printf("%d is deleted \n",num);
-    prev->next=NULL;
+    pre->next=NULL;
     free(cur);
-    }
     return head;
 }
 
-node *insertPOS(node *head)
+
+node *deleteBEG(node *head)
 {
-    int num,pos;
-    node *cur,*newnode,*prev;
-    cur=head;
-    int count=1;
-    printf("Enter the position:\n");
-    scanf("%d",&pos);
-    printf("Enter the number to be inserted:\n");
-    scanf("%d",&num);
-    newnode=(node*)malloc(sizeof(node));
-    newnode->data=num;
-    newnode->next=NULL;
-    if(count==pos)
+    node *cur,*temp;
+    cur=head->next;
+    temp=head;
+    if(head==NULL)
     {
-        newnode->next=cur;
-        head=newnode;
+        return head;
     }
-    else
-    {
-        while(cur!=NULL)
-        {
-            prev=cur;
-            cur=cur->next;
-            count++;
-         if(count==pos)
-        {
-            prev->next=newnode;
-            newnode->next=cur;
-        }
-        }
-    }
+    cur->prev=NULL;
+    head=cur;
+    free(temp);
     return head;
 }
+
 
 node *display(node *head)
 {
     node *cur;
     cur=head;
-    if(cur==NULL)
-    {
-        printf("Empty\n");
-    }
     while(cur!=NULL)
     {
         printf("%d\t",cur->data);
@@ -154,15 +106,132 @@ node *display(node *head)
     return head;
 }
 
+node *insertPOS(node *head)
+{
+    node *cur,*temp,*newnode;
+    cur=head;
+    int pos,num;
+    int n=1;
+    printf("Enter the position:\n");
+    scanf("%d",&pos);
+    printf("Enter the number:\n");
+    scanf("%d",&num);
+    newnode=(node *)malloc(sizeof(node));
+    newnode->data=num;
+    newnode->prev=newnode->next=NULL;
+    while(n!=pos)
+    {
+        cur=cur->next;
+        n++;
+    }
+    if(cur==head)
+    {
+      //temp=
+      head->prev=newnode;
+      newnode->next=head;
+      newnode->prev=NULL;
+      head=newnode;
+      return head;
+    }
+
+    else if(cur->next!=NULL)
+   {
+       temp=cur;
+       cur->prev->next=newnode;
+       newnode->next=cur;
+       cur->prev=newnode;
+       cur->next=temp->next;
+       newnode->prev=temp->prev;
+   }
+   else
+    {
+        cur->next=newnode;
+        newnode->prev=cur;
+        newnode->next=NULL;
+    }
+   return head;
+
+}
+
+
+node *deletePOS(node *head)
+{
+    node *cur,*temp;
+    int ele;
+    cur=head;
+    printf("Enter the element you want to delete:\n");
+    scanf("%d",&ele);
+    while(cur!=NULL)
+    {
+        if(cur->data!=ele)
+            cur=cur->next;
+        else
+            break;
+    }
+
+    if(cur==NULL)
+    {
+        printf("Empty\n");
+    }
+    else if(cur->prev==NULL && cur->next==NULL)
+    {
+        free(cur);
+        head=NULL;
+    }
+    else if(cur==head)
+    {
+        head=cur->next;
+        free (cur);
+        cur=head;
+        cur->prev=NULL;
+    }
+
+    else if(cur->next==NULL)
+    {
+        temp=cur->prev;
+        temp->next=NULL;
+        //cur->prev->next=NULL;
+        head=temp;
+        free(cur);
+    }
+    else
+    {
+        temp=cur;
+        cur->prev->next=cur->next;
+        cur->next->prev=cur->prev;
+        free(cur);
+    }
+    return head;
+}
+
+node *reverse(node *head)
+{
+   node *cur,*temp;
+   cur=head;
+   while(cur!=NULL)
+   {
+       temp=cur->prev;
+       cur->prev=cur->next;
+       cur->next=temp;
+       cur=cur->prev;
+   }
+   if(temp!=NULL)
+   {
+       head=temp->prev;
+   }
+   return head;
+}
+
 main()
 {
     node *head;
     //node *temp;
     head=NULL;
+    //head2=NULL;
     int ch,done=1;
     while(done)
     {
-    printf("1.Insert at rear\n2.Delete rear\n3.Display\n4.Insert beg\n5.Delete beg\n6.Insert position\n");
+    printf("1.Insert at end\n2.Delete end\n3.Display \n4.Insert beg\n5.Delete beg\n6.Delete position\n7.Insert position\n8.Reverse\n");
     printf("Enter the choice:\n");
     scanf("%d",&ch);
     switch(ch)
@@ -173,11 +242,15 @@ main()
                      break;
         case 3:head=display(head);
                break;
-        case 4:head=inserBEG(head);
+        case 4:head=insertBEG(head);
                break;
         case 5:head=deleteBEG(head);
-                break;
-        case 6:head=insertPOS(head);
+               break;
+        case 6:head=deletePOS(head);
+               break;
+        case 7:head=insertPOS(head);
+               break;
+        case 8:head=reverse(head);
                break;
         default: done=0;
     }
@@ -186,3 +259,8 @@ main()
 
     }
 }
+
+
+
+
+
