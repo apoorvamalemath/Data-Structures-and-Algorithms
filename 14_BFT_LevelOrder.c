@@ -1,6 +1,6 @@
 #include<stdio.h>
 
-// Breadth First Search -- Level Order Traversal
+// Breadth First Traversal -- Level Order Traversal
 
 struct node
 {
